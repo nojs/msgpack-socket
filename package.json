@@ -1,16 +1,17 @@
 {
-  "name": "@nojs/msgpack-socket",
-  "version": "0.0.4",
+  "name": "msgpack-socket",
+  "version": "0.0.6",
   "description": "frame socket messages with msgpack",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Dmitry Unkovsky <oil.crayons@gmail.com>",
   "license": "ISC",
   "dependencies": {
     "co": "^4.5.4",
-    "msgpack": "^0.2.6",
+    "debug": "^2.2.0",
+    "msgpack-bin": "0.2.6-1",
     "q": "^1.4.1"
   }
 }
