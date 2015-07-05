@@ -4,8 +4,15 @@ var net = require('net')
 var EventEmitter = require('events').EventEmitter
 var assert = require('assert')
 
-var mp = require('msgpack-buf')
+var debug = require('debug')('msgpack-socket:socket')
 
+var mp = require('msgpack-bin')
+
+function binaryDecoder(buf){
+  var b = mp.unpack(buf, true)
+  binaryDecoder.bytes_remaining = mp.unpack.bytes_remaining
+  return b
+}
 
 function bindHandlers(handlers_prop, emitter, self){
 
@@ -35,7 +42,7 @@ function Socket(conn){
   this._socket = conn
   this._rxBuffer = null
   this._txBox = []
-  this._defaultDecoder = mp.unpack
+  this._defaultDecoder = binaryDecoder
   this.drained = true
 
   bindHandlers('socket', this._socket, this)
@@ -67,7 +74,7 @@ Socket.prototype = {
       if(m !== undefined) return m
 
       yield this.await('readable')
-      console.log('---- readable')
+      debug('---- readable')
     }
   },
 
@@ -81,8 +88,8 @@ Socket.prototype = {
     if(m === undefined) return undefined
 
     var bytesUnpacked = this._rxBuffer.length - decoder.bytes_remaining
-    console.log('this._rxBuffer.length, bytesUnpacked, decoder.bytes_remaining')
-    console.log(this._rxBuffer.length, bytesUnpacked, decoder.bytes_remaining)
+    debug('this._rxBuffer.length, bytesUnpacked, decoder.bytes_remaining')
+    debug(this._rxBuffer.length, bytesUnpacked, decoder.bytes_remaining)
 
     if(bytesUnpacked === this._rxBuffer.length){
       this._rxBuffer = null
@@ -111,7 +118,7 @@ Socket.prototype = {
 
       var r = this._socket.write(b)
       
-      console.log('_flush, after .write', this._socket.bufferSize)
+      debug('_flush, after .write', this._socket.bufferSize)
       
       if(!r){
         this.drained = false
@@ -126,7 +133,7 @@ Socket.prototype = {
     socket:{
 
       drain: function(){
-        console.log('drain', this._socket.bufferSize)
+        debug('drain', this._socket.bufferSize)
         
         this.drained = true
         this._flush()
@@ -134,16 +141,16 @@ Socket.prototype = {
       
       readable: function() {
 
-        console.log('._socket %d readable', this._socket)
+        debug('._socket %d readable', this._socket)
 
         var buf = this._socket.read()
 
         if(buf === null){
-          console.log('got null data from read()')
+          debug('got null data from read()')
           
         } else if (buf !== null){
           if(this._rxBuffer){
-            console.log('concatenating', this._rxBuffer.length, buf.length, this._rxBuffer.slice(0,10), buf.slice(0,10))
+            debug('concatenating', this._rxBuffer.length, buf.length, this._rxBuffer.slice(0,10), buf.slice(0,10))
             this._rxBuffer = Buffer.concat([this._rxBuffer, buf])
           } else {
             this._rxBuffer = buf
@@ -153,12 +160,12 @@ Socket.prototype = {
       },
 
       end: function() {
-        console.log('socket %d end', this._socket)
+        debug('socket %d end', this._socket)
         this._socket = null
       },
 
       error: function(err) {
-        console.log('socket error', err)
+        debug('socket error', err)
         this._socket = null
         throw err
       },
@@ -196,7 +203,7 @@ Server.prototype = {
         this.emit('connection', sock)
       },
       error: function(err){
-        console.log('server error', err)
+        debug('server error', err)
       },
       listening: function(){
         this.emit('listening')
@@ -224,7 +231,7 @@ Client.prototype = {
       __proto__: Socket.prototype.hdl.socket,
       
       connect: function(){
-        console.log('socket connected')
+        debug('socket connected')
         this.emit('connect')
       }
 
@@ -238,5 +245,4 @@ Client.prototype = {
 module.exports.Socket = Socket
 module.exports.Server = Server
 module.exports.Client = Client
-
 
