@@ -8,7 +8,7 @@ var co = require('co')
 
 var mpsock = require('../index')
 
-var mkTempPath = require('./pair').mkTempPath
+var mkTempPath = require('../pair').mkTempPath
 
 var Client = mpsock.Client
 var Server = mpsock.Server
