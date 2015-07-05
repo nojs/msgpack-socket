@@ -1,6 +1,6 @@
 {
   "name": "msgpack-socket",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "frame socket messages with msgpack",
   "main": "index.js",
   "scripts": {
