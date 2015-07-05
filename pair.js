@@ -6,6 +6,8 @@ var net = require('net')
 var fs = require('fs')
 var q = require('q')
 
+var debug = require('debug')('msgpack-socket:pair')
+
 var util = require('util')
 
 var co = require('co')
@@ -15,11 +17,15 @@ function mkTempPath(){
   return util.format('/tmp/%s-%s.sock', process.pid, uid)
 }
 
-function *mkSocketPair(){
+function *mkSocketPair(useTcp){
 
   var S = new net.Server()
 
-  var sockpath = mkTempPath()
+  if(useTcp){
+    var sockpath = Math.floor((Math.random()+1)*32000)
+  } else {
+    var sockpath = mkTempPath()
+  }
 
   console.log('sockpath', sockpath)
 
