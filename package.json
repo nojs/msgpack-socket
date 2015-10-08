@@ -1,6 +1,6 @@
 {
   "name": "msgpack-socket",
-  "version": "0.0.7",
+  "version": "0.0.8-a2",
   "description": "frame socket messages with msgpack",
   "main": "index.js",
   "scripts": {
@@ -11,7 +11,7 @@
   "dependencies": {
     "co": "^4.5.4",
     "debug": "^2.2.0",
-    "msgpack-bin": "0.2.6-1",
+    "msgpack-bin": "0.3.0-1",
     "q": "^1.4.1"
   }
 }
